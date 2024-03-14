@@ -1,58 +1,57 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
-#define MAX_PROD 10
-#define MAX_LEN 20
+#define MAX_PROD 10 // Maximum number of productions
+#define MAX_LEN 20  // Maximum length of a production
 
-char production[MAX_PROD][MAX_LEN];
-int num_prod;
-
-void eliminateLeftRecursion() {
+void eliminateLeftRecursion(char productions[MAX_PROD][MAX_LEN], int numProd) {
+    char alpha[MAX_PROD][MAX_LEN], beta[MAX_PROD][MAX_LEN];
+    int alphaCount = 0, betaCount = 0;
     int i, j;
-    char alpha[MAX_LEN], beta[MAX_LEN];
 
-    for (i = 0; i < num_prod; i++) {
-        for (j = 0; j < i; j++) {
-            if (production[i][0] == production[j][0]) {
-                strcpy(alpha, "");
-                strcpy(beta, "");
-
-                int k = 3;
-                while (production[i][k] != '|' && production[i][k] != '\0') {
-                    strncat(alpha, &production[i][k], 1);
-                    k++;
-                }
-
-                k = 3;
-                while (production[j][k] != '|' && production[j][k] != '\0') {
-                    strncat(beta, &production[j][k], 1);
-                    k++;
-                }
-
-                printf("%c -> %s%s'\n", production[i][0], beta, production[i][0]);
-                printf("%c' -> %s%s' | e\n", production[i][0], alpha, production[i][0]);
-            }
-            else {
-                printf("%s\n", production[i]);
-            }
+    for (i = 0; i < numProd; i++) {
+        if (productions[i][0] == productions[i][3]) {
+            strcpy(alpha[alphaCount], &productions[i][4]);
+            alpha[alphaCount][strlen(alpha[alphaCount]) - 1] = '\0'; // Remove the right recursion
+            alphaCount++;
+        } else {
+            strcpy(beta[betaCount], productions[i]);
+            betaCount++;
         }
+    }
+
+    if (alphaCount == 0) {
+        printf("No left recursion found.\n");
+        return;
+    }
+
+    printf("Transformed productions:\n");
+    for (i = 0; i < betaCount; i++) {
+        printf("%s\n", beta[i]);
+        for (j = 0; j < alphaCount; j++) {
+            printf("%s%s'\n", beta[i], alpha[j]);
+        }
+    }
+    // Add epsilon production for the non-terminal symbols
+    for (i = 0; i < alphaCount; i++) {
+        printf("%s' -> epsilon\n", alpha[i]);
     }
 }
 
 int main() {
-    printf("Enter the number of productions: ");
-    scanf("%d", &num_prod);
+    int numProd, i;
+    char productions[MAX_PROD][MAX_LEN];
 
-    printf("Enter the productions:\n");
-    int i;
-    for (i = 0; i < num_prod; i++) {
-        scanf("%s", production[i]);
+    printf("Enter the number of productions: ");
+    scanf("%d", &numProd);
+
+    printf("Enter the production rules:\n");
+    for (i = 0; i < numProd; i++) {
+        scanf("%s", productions[i]);
     }
 
-    printf("Productions after eliminating left recursion:\n");
-    eliminateLeftRecursion();
+    eliminateLeftRecursion(productions, numProd);
 
     return 0;
 }
-

@@ -1,57 +1,38 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define MAX_PROD 10 // Maximum number of productions
-#define MAX_LEN 20  // Maximum length of a production
-
-void eliminateLeftRecursion(char productions[MAX_PROD][MAX_LEN], int numProd) {
-    char alpha[MAX_PROD][MAX_LEN], beta[MAX_PROD][MAX_LEN];
-    int alphaCount = 0, betaCount = 0;
-    int i, j;
-
-    for (i = 0; i < numProd; i++) {
-        if (productions[i][0] == productions[i][3]) {
-            strcpy(alpha[alphaCount], &productions[i][4]);
-            alpha[alphaCount][strlen(alpha[alphaCount]) - 1] = '\0'; // Remove the right recursion
-            alphaCount++;
-        } else {
-            strcpy(beta[betaCount], productions[i]);
-            betaCount++;
-        }
-    }
-
-    if (alphaCount == 0) {
-        printf("No left recursion found.\n");
-        return;
-    }
-
-    printf("Transformed productions:\n");
-    for (i = 0; i < betaCount; i++) {
-        printf("%s\n", beta[i]);
-        for (j = 0; j < alphaCount; j++) {
-            printf("%s%s'\n", beta[i], alpha[j]);
-        }
-    }
-    // Add epsilon production for the non-terminal symbols
-    for (i = 0; i < alphaCount; i++) {
-        printf("%s' -> epsilon\n", alpha[i]);
-    }
-}
-
-int main() {
-    int numProd, i;
-    char productions[MAX_PROD][MAX_LEN];
-
-    printf("Enter the number of productions: ");
-    scanf("%d", &numProd);
-
-    printf("Enter the production rules:\n");
-    for (i = 0; i < numProd; i++) {
-        scanf("%s", productions[i]);
-    }
-
-    eliminateLeftRecursion(productions, numProd);
-
-    return 0;
-}
+#include<stdio.h>  
+#include<string.h>  
+#define SIZE 10  
+  int main () {  
+       char non_terminal;  
+       char beta,alpha;  
+       int num;  
+       char production[10][SIZE];  
+       int index=3; /* starting of the string following "->" */  
+       printf("Enter Number of Production : ");  
+       scanf("%d",&num);  
+       printf("Enter the grammar as E->E-A :\n");  
+       int i;
+       for(i=0;i<num;i++){  
+            scanf("%s",production[i]);  
+       }  
+       for(i=0;i<num;i++){  
+            printf("\nGRAMMAR : : : %s",production[i]);  
+            non_terminal=production[i][0];  
+            if(non_terminal==production[i][index]) {  
+                 alpha=production[i][index+1];  
+                 printf(" is left recursive.\n");  
+                 while(production[i][index]!=0 && production[i][index]!='|')  
+                      index++;  
+                 if(production[i][index]!=0) {  
+                      beta=production[i][index+1];  
+                      printf("Grammar without left recursion:\n");  
+                      printf("%c->%c%c\'",non_terminal,beta,non_terminal);  
+                      printf("\n%c\'->%c%c\'|E\n",non_terminal,alpha,non_terminal);  
+                 }  
+                 else  
+                      printf(" can't be reduced\n");  
+            }  
+            else  
+                 printf(" is not left recursive.\n");  
+            index=3;  
+       }  
+  }   

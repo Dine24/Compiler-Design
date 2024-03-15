@@ -1,63 +1,36 @@
-#include <stdio.h>
-#include <string.h>
-
-// Maximum number of productions
-#define MAX_PROD 10
-// Maximum length of a production
-#define MAX_LEN 20
-
-// Function to eliminate left factoring
-void eliminateLeftFactoring(char productions[MAX_PROD][MAX_LEN], int numProd) {
-    int i, j, k;
-    char common[MAX_LEN];
-    int commonLen;
-
-    for (i = 0; i < numProd; i++) {
-        for (j = i + 1; j < numProd; j++) {
-            commonLen = 0;
-            while (productions[i][commonLen] == productions[j][commonLen] && productions[i][commonLen] != '\0') {
-                commonLen++;
-            }
-            if (commonLen > 0) {
-                // Found a common prefix, extract it
-                strncpy(common, productions[i], commonLen);
-                common[commonLen] = '\0';
-
-                printf("Common prefix found: %s\n", common);
-
-                // Replace common prefix with a new non-terminal
-                printf("New production rules:\n");
-                printf("A -> %sA'\n", common);
-                printf("A' -> ");
-                for (k = commonLen; productions[i][k] != '\0'; k++) {
-                    printf("%c", productions[i][k]);
-                }
-                printf("|");
-                for (k = commonLen; productions[j][k] != '\0'; k++) {
-                    printf("%c", productions[j][k]);
-                }
-                printf("|epsilon\n");
-            }
-        }
-    }
-}
-
-int main() {
-    int numProd;
-    char productions[MAX_PROD][MAX_LEN];
-
-    printf("Enter the number of productions: ");
-    scanf("%d", &numProd);
-
-    printf("Enter the production rules:\n");
-    int i;
-    for (i = 0; i < numProd; i++) {
-        scanf("%s", productions[i]);
-    }
-
-    printf("\nEliminating left factoring...\n");
-    eliminateLeftFactoring(productions, numProd);
-
-    return 0;
-}
-
+#include<stdio.h>  
+#include<string.h>  
+   int main()  
+   {  
+       char gram[20],part1[20],part2[20],modifiedGram[20],newGram[20],tempGram[20];  
+       int i,j=0,k=0,l=0,pos;  
+       printf("Enter Production : S->");  
+       gets(gram);  
+       for(i=0;gram[i]!='|';i++,j++)  
+            part1[j]=gram[i];  
+       part1[j]='\0';  
+       for(j=++i,i=0;gram[j]!='\0';j++,i++)  
+            part2[i]=gram[j];  
+       part2[i]='\0';  
+       for(i=0;i<strlen(part1)||i<strlen(part2);i++)  
+       {  
+            if(part1[i]==part2[i])  
+            {  
+                 modifiedGram[k]=part1[i];  
+                 k++;  
+                 pos=i+1;  
+            }  
+       }  
+       for(i=pos,j=0;part1[i]!='\0';i++,j++){  
+            newGram[j]=part1[i];  
+       }  
+       newGram[j++]='|';  
+       for(i=pos;part2[i]!='\0';i++,j++){  
+            newGram[j]=part2[i];  
+       }  
+       modifiedGram[k]='X';  
+       modifiedGram[++k]='\0';  
+       newGram[j]='\0';  
+       printf("\n S->%s",modifiedGram);  
+       printf("\n X->%s\n",newGram);  
+  }  
